@@ -18,7 +18,8 @@ test:
 
 # Validate commit messages (checks latest commit against main)
 check-commits:
-    @git rev-parse HEAD~1 > /dev/null 2>&1 && npx commitlint --from=main --to=HEAD --verbose || echo "Skipping commitlint on root commit"
+    @git rev-parse HEAD~1 > /dev/null 2>&1 && commitlint --from=HEAD~1 --to=HEAD --verbose || echo "Skipping commitlint on root commit"
+
 
 # Run all CI checks locally
 ci: lint test check-commits
