@@ -1,0 +1,25 @@
+[app]
+poll_interval_seconds = 900
+request_timeout_seconds = 20
+
+[[targets]]
+id = "endurace-cf-7-di2-ltd-grey-3xs"
+name = "Endurace CF 7 Di2 LTD - Lillet Grey - 3XS"
+url = "https://www.canyon.com/en-gb/road-bikes/endurance-bikes/endurace/cf/endurace-cf-7-di2-ltd/4376.html?dwvar_4376_pv_rahmenfarbe=R076_P10&dwvar_4376_pv_rahmengroesse=3XS"
+expected_colour_code = "R076_P10"
+expected_size = "3XS"
+
+[[targets]]
+id = "endurace-cf-7-ltd-grey"
+name = "Endurace CF 7 LTD - Lillet Grey"
+url = "https://www.canyon.com/en-gb/road-bikes/endurance-bikes/endurace/cf/endurace-cf-7-ltd/4375.html?dwvar_4375_pv_rahmenfarbe=R076_P10"
+expected_colour_code = "R076_P10"
+
+[notifications.telegram]
+enabled = false
+
+[notifications.slack]
+enabled = false
+
+[storage]
+sqlite_path = "data/monitor.db"
