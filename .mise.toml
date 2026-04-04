@@ -1,0 +1,27 @@
+[tools]
+python = { version = "3.12", virtualenv = ".venv" }
+just = "1.48"
+git-cliff = "2.8"
+node = "20"
+"npm:@commitlint/cli" = "19"
+"npm:@commitlint/config-conventional" = "19"
+
+[tasks.install]
+description = "Install dependencies"
+run = "just install"
+
+[tasks.ci]
+description = "Run CI checks"
+run = "just ci"
+
+[tasks.test]
+description = "Run tests"
+run = "just test"
+
+[tasks.lint]
+description = "Run linting"
+run = "just lint"
+
+[tasks.release]
+description = "Create a release"
+run = "just release"

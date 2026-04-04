@@ -1,0 +1,38 @@
+[project]
+name = "canyon-watcher"
+version = "0.1.0"
+description = "Canyon bike stock monitor"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "httpx",
+    "beautifulsoup4",
+    "pydantic",
+    "pydantic-settings",
+    "apscheduler",
+    "prometheus-client",
+    "structlog",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "respx",
+    "ruff",
+    "pre-commit",
+    "detect-secrets",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "B"]
+ignore = []
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
