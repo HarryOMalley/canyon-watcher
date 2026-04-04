@@ -4,10 +4,10 @@ import httpx
 import pytest
 import respx
 
-from src.domain.enums import StockState
-from src.domain.models import NotificationEvent
-from src.infrastructure.notifiers.slack import SlackNotifier
-from src.infrastructure.notifiers.telegram import TelegramNotifier
+from domain.enums import StockState
+from domain.models import NotificationEvent
+from infrastructure.notifiers.slack import SlackNotifier
+from infrastructure.notifiers.telegram import TelegramNotifier
 
 
 @pytest.mark.asyncio

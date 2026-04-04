@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from src.domain.models import StockObservation
+from domain.models import StockObservation
 
 
 class ObservationRepository(Protocol):

@@ -2,9 +2,9 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from src.domain.enums import StockState
-from src.domain.models import StockObservation
-from src.infrastructure.persistence.sqlite_repo import SQLiteObservationRepository
+from domain.enums import StockState
+from domain.models import StockObservation
+from infrastructure.persistence.sqlite_repo import SQLiteObservationRepository
 
 
 @pytest.fixture

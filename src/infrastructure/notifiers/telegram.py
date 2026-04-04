@@ -1,7 +1,7 @@
 import httpx
 
-from src.application.ports.notifier import Notifier
-from src.domain.models import NotificationEvent
+from application.ports.notifier import Notifier
+from domain.models import NotificationEvent
 
 
 class TelegramNotifier(Notifier):
