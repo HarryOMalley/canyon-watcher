@@ -13,52 +13,52 @@
 
 ## Phase 0: Project Foundation (The Orchestrator)
 
-- [ ] Initialize Git repository.
-- [ ] Create `README.md` (Project Goals) and `CONTRIBUTING.md` (Agent/Contributor Guidelines).
-- [ ] Create `pyproject.toml` (Dependencies, Linter configs like `ruff`).
-- [ ] Create `.github/workflows/ci.yml` (Lint, Test, Commit Linting, Versioning).
-- [ ] Initial commit to `main` branch.
+- [x] Initialize Git repository.
+- [x] Create `README.md` (Project Goals) and `CONTRIBUTING.md` (Agent/Contributor Guidelines).
+- [x] Create `pyproject.toml` (Dependencies, Linter configs like `ruff`).
+- [x] Create `.github/workflows/ci.yml` (Lint, Test, Commit Linting, Versioning).
+- [x] Initial commit to `main` branch.
 
 ## Phase 1: Core Domain & Protocols (The Implementer)
 
-- [ ] Create branch `domain-protocols`.
-- [ ] Define `StockState` Enum and `MonitorTarget` / `StockObservation` models.
-- [ ] Define Protocols (Interfaces): `Retailer`, `ObservationRepository`, `Notifier`.
-- [ ] Push, open PR, request `Reviewer Agent`.
-- [ ] Address review, merge to `main`, bump version (e.g., `v0.1.0`).
+- [x] Create branch `domain-protocols`.
+- [x] Define `StockState` Enum and `MonitorTarget` / `StockObservation` models.
+- [x] Define Protocols (Interfaces): `Retailer`, `ObservationRepository`, `Notifier`.
+- [x] Push, open PR, request `Reviewer Agent`.
+- [x] Address review, merge to `main`, bump version (e.g., `v0.1.0`).
 
 ## Phase 2: Parallel Implementations (Multiple Implementer Agents)
 
-This phase will be executed via separate feature branches. As each merges, subsequent branches must rebase against `main`.
+This phase was executed via separate feature branches.
 
 ### Track A: Canyon Retailer
-- [ ] Create branch `canyon-retailer` (from `main`).
-- [ ] Implement `CanyonFetcher` (httpx) & `CanyonParser` (BS4/html logic).
-- [ ] Write unit tests and mock HTML fixtures.
-- [ ] Push, review, rebase, merge.
+- [x] Create branch `canyon-retailer` (from `main`).
+- [x] Implement `CanyonRetailer` (httpx & BS4).
+- [x] Write unit tests and mock HTML fixtures.
+- [x] Push, review, rebase, merge.
 
 ### Track B: SQLite Persistence
-- [ ] Create branch `sqlite-repo` (from `main`).
-- [ ] Implement `SQLiteObservationRepository` (init, save, get_latest).
-- [ ] Write unit tests.
-- [ ] Push, review, rebase, merge.
+- [x] Create branch `sqlite-repo` (from `main`).
+- [x] Implement `SQLiteObservationRepository`.
+- [x] Write unit tests.
+- [x] Push, review, rebase, merge.
 
 ### Track C: Notification Channels
-- [ ] Create branch `telegram-notifier` (from `main`).
-- [ ] Implement `TelegramNotifier` and `SlackNotifier`.
-- [ ] Write unit tests.
-- [ ] Push, review, rebase, merge.
+- [x] Create branch `telegram-notifier` (from `main`).
+- [x] Implement `TelegramNotifier` and `SlackNotifier`.
+- [x] Write unit tests.
+- [x] Push, review, rebase, merge.
 
 ## Phase 3: Orchestration & API (The Integrator)
 
-- [ ] Create branch `orchestration-api`.
-- [ ] Implement `CheckStockUseCase` (coordinates Fetcher -> Repo -> Notifier).
-- [ ] Implement FastAPI endpoints (`/health/live`, `/metrics`, etc.) & APScheduler loop.
-- [ ] Push, review, rebase, merge.
+- [x] Create branch `orchestration-api`.
+- [x] Implement `CheckStockUseCase`.
+- [x] Implement FastAPI endpoints & APScheduler loop.
+- [x] Push, review, rebase, merge.
 
 ## Phase 4: Delivery (The Releaser)
 
-- [ ] Create branch `docker-delivery`.
-- [ ] Create `Dockerfile` and `docker-compose.yml`.
+- [x] Create branch `docker-delivery`.
+- [x] Create `Dockerfile` and `docker-compose.yml`.
 - [ ] Push, review, merge.
 - [ ] Trigger final release to `v1.0.0`.
