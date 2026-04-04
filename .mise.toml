@@ -6,6 +6,9 @@ node = "20"
 "npm:@commitlint/cli" = "19"
 "npm:@commitlint/config-conventional" = "19"
 
+[env]
+PYTHONPATH = "src"
+
 [tasks.install]
 description = "Install dependencies"
 run = "just install"
