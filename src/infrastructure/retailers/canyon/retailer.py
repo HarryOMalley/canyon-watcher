@@ -3,9 +3,9 @@ import logging
 import httpx
 from bs4 import BeautifulSoup
 
-from src.domain.enums import StockState
-from src.domain.models import MonitorTarget, StockObservation
-from src.domain.retailer import Retailer
+from domain.enums import StockState
+from domain.models import MonitorTarget, StockObservation
+from domain.retailer import Retailer
 
 logger = logging.getLogger(__name__)
 

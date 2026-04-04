@@ -4,9 +4,9 @@ import httpx
 import pytest
 import respx
 
-from src.domain.enums import StockState
-from src.domain.models import MonitorTarget
-from src.infrastructure.retailers.canyon.retailer import CanyonRetailer
+from domain.enums import StockState
+from domain.models import MonitorTarget
+from infrastructure.retailers.canyon.retailer import CanyonRetailer
 
 FIXTURES_DIR = pathlib.Path(__file__).parent / "fixtures"
 

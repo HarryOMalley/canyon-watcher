@@ -3,8 +3,8 @@ from datetime import UTC, datetime
 import pytest
 from pydantic import ValidationError
 
-from src.domain.enums import StockState
-from src.domain.models import MonitorTarget, StockObservation
+from domain.enums import StockState
+from domain.models import MonitorTarget, StockObservation
 
 
 def test_monitor_target_creation():

@@ -2,9 +2,9 @@ import sqlite3
 from datetime import datetime
 from pathlib import Path
 
-from src.application.ports.repository import ObservationRepository
-from src.domain.enums import StockState
-from src.domain.models import StockObservation
+from application.ports.repository import ObservationRepository
+from domain.enums import StockState
+from domain.models import StockObservation
 
 
 class SQLiteObservationRepository(ObservationRepository):
