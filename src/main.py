@@ -8,9 +8,11 @@ import structlog
 import uvicorn
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
+from pydantic import ValidationError
 
 from application.use_cases.check_stock import CheckStockUseCase
 from infrastructure.config import load_settings
+from infrastructure.notifiers.discord import DiscordNotifier
 from infrastructure.notifiers.slack import SlackNotifier
 from infrastructure.notifiers.telegram import TelegramNotifier
 from infrastructure.persistence.sqlite_repo import SQLiteObservationRepository
@@ -57,8 +59,18 @@ def initialize_app():
             )
         if settings.notifications.slack.enabled:
             notifiers.append(SlackNotifier(settings.notifications.slack.webhook_url))
+        if settings.notifications.discord.enabled:
+            notifiers.append(
+                DiscordNotifier(settings.notifications.discord.webhook_url)
+            )
 
         check_stock_use_case = CheckStockUseCase(retailer, repository, notifiers)
+    except ValidationError as e:
+        logger.error(
+            "Configuration validation failed. Please check your config.toml.",
+            errors=e.errors(),
+        )
+        sys.exit(1)
     except Exception as e:
         logger.error("Initialization failed", error=str(e))
         sys.exit(1)
