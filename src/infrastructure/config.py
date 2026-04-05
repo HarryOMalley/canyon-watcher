@@ -42,10 +42,21 @@ class Settings(BaseSettings):
 
 
 def load_settings(path: str | Path) -> Settings:
-    """Load settings from a TOML file."""
+    """Load settings from a TOML file. Creates a default file if it doesn't exist."""
     p = Path(path)
     if not p.exists():
-        return Settings()
+        settings = Settings()
+        # Ensure parent directory exists
+        p.parent.mkdir(parents=True, exist_ok=True)
+        # We don't have a toml serializer easily available without extra deps,
+        # but we can write a simple default or copy example if available.
+        example = Path("config.toml.example")
+        if example.exists():
+            p.write_text(example.read_text())
+        else:
+            # Minimal default
+            p.write_text("[app]\npoll_interval_seconds = 900\n")
+        return settings
 
     with open(p, "rb") as f:
         data = tomllib.load(f)
