@@ -20,27 +20,33 @@ class SQLiteObservationRepository(ObservationRepository):
         return conn
 
     def _init_db(self) -> None:
-        with self._get_connection() as conn:
-            conn.execute(
-                """
-                CREATE TABLE IF NOT EXISTS observations (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    target_id TEXT NOT NULL,
-                    timestamp TEXT NOT NULL,
-                    state TEXT NOT NULL,
-                    is_buyable INTEGER NOT NULL,
-                    price TEXT,
-                    availability_text TEXT,
-                    config_match INTEGER NOT NULL
+        try:
+            with self._get_connection() as conn:
+                conn.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS observations (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        target_id TEXT NOT NULL,
+                        timestamp TEXT NOT NULL,
+                        state TEXT NOT NULL,
+                        is_buyable INTEGER NOT NULL,
+                        price TEXT,
+                        availability_text TEXT,
+                        config_match INTEGER NOT NULL
+                    )
+                    """
                 )
-                """
-            )
-            conn.execute(
-                """
-                CREATE INDEX IF NOT EXISTS idx_target_timestamp
-                ON observations (target_id, timestamp DESC)
-                """
-            )
+                conn.execute(
+                    """
+                    CREATE INDEX IF NOT EXISTS idx_target_timestamp
+                    ON observations (target_id, timestamp DESC)
+                    """
+                )
+        except sqlite3.Error as e:
+            raise RuntimeError(
+                f"Failed to initialize database at {self.db_path}: {e}. "
+                "Ensure the directory exists and is writable."
+            ) from e
 
     def save(self, observation: StockObservation) -> None:
         with self._get_connection() as conn:

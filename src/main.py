@@ -1,14 +1,18 @@
 import asyncio
 import logging
+import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import structlog
+import uvicorn
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
+from pydantic import ValidationError
 
 from application.use_cases.check_stock import CheckStockUseCase
 from infrastructure.config import load_settings
+from infrastructure.notifiers.discord import DiscordNotifier
 from infrastructure.notifiers.slack import SlackNotifier
 from infrastructure.notifiers.telegram import TelegramNotifier
 from infrastructure.persistence.sqlite_repo import SQLiteObservationRepository
@@ -27,28 +31,56 @@ structlog.configure(
 )
 logger = structlog.get_logger()
 
-# Global state
-settings = load_settings("config.toml")
-repository = SQLiteObservationRepository(settings.sqlite_path)
-retailer = CanyonRetailer()
-
-notifiers = []
-if settings.notifications.telegram.enabled:
-    notifiers.append(
-        TelegramNotifier(
-            settings.notifications.telegram.bot_token,
-            settings.notifications.telegram.chat_id,
-        )
-    )
-if settings.notifications.slack.enabled:
-    notifiers.append(SlackNotifier(settings.notifications.slack.webhook_url))
-
-check_stock_use_case = CheckStockUseCase(retailer, repository, notifiers)
+# Global state placeholders
+settings = None
+repository = None
+check_stock_use_case = None
 scheduler = AsyncIOScheduler()
+
+
+def initialize_app():
+    global settings, repository, check_stock_use_case
+    try:
+        settings = load_settings("config.toml")
+
+        # Ensure data directory exists before repository initialization
+        Path(settings.sqlite_path).parent.mkdir(parents=True, exist_ok=True)
+
+        repository = SQLiteObservationRepository(settings.sqlite_path)
+        retailer = CanyonRetailer()
+
+        notifiers = []
+        if settings.notifications.telegram.enabled:
+            notifiers.append(
+                TelegramNotifier(
+                    settings.notifications.telegram.bot_token,
+                    settings.notifications.telegram.chat_id,
+                )
+            )
+        if settings.notifications.slack.enabled:
+            notifiers.append(SlackNotifier(settings.notifications.slack.webhook_url))
+        if settings.notifications.discord.enabled:
+            notifiers.append(
+                DiscordNotifier(settings.notifications.discord.webhook_url)
+            )
+
+        check_stock_use_case = CheckStockUseCase(retailer, repository, notifiers)
+    except ValidationError as e:
+        logger.error(
+            "Configuration validation failed. Please check your config.toml.",
+            errors=e.errors(),
+        )
+        sys.exit(1)
+    except Exception as e:
+        logger.error("Initialization failed", error=str(e))
+        sys.exit(1)
 
 
 async def run_checks():
     """Trigger stock checks for all enabled targets."""
+    if not settings or not check_stock_use_case:
+        return
+
     for target in settings.targets:
         if not target.enabled:
             continue
@@ -68,13 +100,10 @@ async def run_checks():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Startup logic moved to initialize_app() for immediate feedback on run,
+    # but scheduler starts here.
     logger.info("Starting Canyon Stock Monitor")
 
-    # Ensure data directory exists
-    Path(settings.sqlite_path).parent.mkdir(parents=True, exist_ok=True)
-
-    # Start scheduler
     scheduler.add_job(
         run_checks,
         "interval",
@@ -105,6 +134,8 @@ async def liveness():
 @app.get("/health/ready")
 async def readiness():
     # Basic check if we can query the repo
+    if not repository:
+        return {"status": "error", "message": "Repository not initialized"}, 503
     try:
         repository.get_latest("health-check")
         return {"status": "ok"}
@@ -114,6 +145,8 @@ async def readiness():
 
 @app.get("/monitors")
 async def list_monitors():
+    if not settings or not repository:
+        return []
     results = []
     for target in settings.targets:
         latest = repository.get_latest(target.id)
@@ -123,6 +156,8 @@ async def list_monitors():
 
 @app.get("/monitors/{target_id}")
 async def get_monitor(target_id: str):
+    if not settings or not repository:
+        return {"error": "Not initialized"}, 503
     target = next((t for t in settings.targets if t.id == target_id), None)
     if not target:
         return {"error": "Target not found"}, 404
@@ -132,6 +167,5 @@ async def get_monitor(target_id: str):
 
 
 if __name__ == "__main__":
-    import uvicorn
-
+    initialize_app()
     uvicorn.run(app, host="0.0.0.0", port=8080)
